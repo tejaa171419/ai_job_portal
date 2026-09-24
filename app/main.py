@@ -1,3 +1,6 @@
+from sqlalchemy import text
+
+from app.db.database import engine
 from fastapi import FastAPI
 
 app = FastAPI(
@@ -20,3 +23,13 @@ def health_check():
     return {
         "status": "healthy"
     }
+
+
+
+@app.get("/health/db")
+def database_health():
+    with engine.connect() as connection:
+        result = connection.execute(text("SELECT 1"))
+        return {
+            "database": result.scalar()
+        }
